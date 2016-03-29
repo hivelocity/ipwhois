@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ipwhois.net &mdash; ipwhois 0.11.2 documentation</title>
+  <title>ipwhois.net &mdash; ipwhois 0.12.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ipwhois 0.11.2 documentation" href="../../index.html"/>
+    <link rel="top" title="ipwhois 0.12.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.11.2
+                0.12.0
               </div>
             
           
@@ -175,7 +175,7 @@
 
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">IPDefinedError</span><span class="p">,</span> <span class="n">ASNRegistryError</span><span class="p">,</span> <span class="n">ASNLookupError</span><span class="p">,</span>
                          <span class="n">BlacklistError</span><span class="p">,</span> <span class="n">WhoisLookupError</span><span class="p">,</span> <span class="n">HTTPLookupError</span><span class="p">,</span>
-                         <span class="n">HostLookupError</span><span class="p">)</span>
+                         <span class="n">HostLookupError</span><span class="p">,</span> <span class="n">HTTPRateLimitError</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.whois</span> <span class="kn">import</span> <span class="n">RIR_WHOIS</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">ipv4_is_defined</span><span class="p">,</span> <span class="n">ipv6_is_defined</span>
 
@@ -198,12 +198,14 @@
     <span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="p">(</span><span class="n">OpenerDirector</span><span class="p">,</span>
                                 <span class="n">ProxyHandler</span><span class="p">,</span>
                                 <span class="n">build_opener</span><span class="p">,</span>
-                                <span class="n">Request</span><span class="p">)</span>
+                                <span class="n">Request</span><span class="p">,</span>
+                                <span class="n">URLError</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
     <span class="kn">from</span> <span class="nn">urllib2</span> <span class="kn">import</span> <span class="p">(</span><span class="n">OpenerDirector</span><span class="p">,</span>
                          <span class="n">ProxyHandler</span><span class="p">,</span>
                          <span class="n">build_opener</span><span class="p">,</span>
-                         <span class="n">Request</span><span class="p">)</span>
+                         <span class="n">Request</span><span class="p">,</span>
+                         <span class="n">URLError</span><span class="p">)</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
@@ -286,8 +288,8 @@
             <span class="k">if</span> <span class="n">is_defined</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
 
                 <span class="k">raise</span> <span class="n">IPDefinedError</span><span class="p">(</span>
-                    <span class="s1">&#39;IPv4 address </span><span class="si">%r</span><span class="s1"> is already defined as </span><span class="si">%r</span><span class="s1"> via &#39;</span>
-                    <span class="s1">&#39;</span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="s1">&#39;IPv4 address {0} is already defined as {1} via &#39;</span>
+                    <span class="s1">&#39;{2}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">,</span> <span class="n">is_defined</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">is_defined</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
@@ -307,8 +309,8 @@
             <span class="k">if</span> <span class="n">is_defined</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
 
                 <span class="k">raise</span> <span class="n">IPDefinedError</span><span class="p">(</span>
-                    <span class="s1">&#39;IPv6 address </span><span class="si">%r</span><span class="s1"> is already defined as </span><span class="si">%r</span><span class="s1"> via &#39;</span>
-                    <span class="s1">&#39;</span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="s1">&#39;IPv6 address {0} is already defined as {1} via &#39;</span>
+                    <span class="s1">&#39;{2}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">,</span> <span class="n">is_defined</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">is_defined</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
@@ -377,7 +379,8 @@
             <span class="k">if</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RIR_WHOIS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
                 <span class="k">raise</span> <span class="n">ASNRegistryError</span><span class="p">(</span>
-                    <span class="s1">&#39;ASN registry </span><span class="si">%r</span><span class="s1"> is not known.&#39;</span> <span class="o">%</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span>
+                    <span class="s1">&#39;ASN registry {0} is not known.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">])</span>
                 <span class="p">)</span>
 
             <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;asn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39; &quot;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -395,14 +398,14 @@
                 <span class="n">dns</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">NoAnswer</span><span class="p">,</span> <span class="n">dns</span><span class="o">.</span><span class="n">exception</span><span class="o">.</span><span class="n">Timeout</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
 
             <span class="k">raise</span> <span class="n">ASNLookupError</span><span class="p">(</span>
-                <span class="s1">&#39;ASN lookup failed (DNS </span><span class="si">%s</span><span class="s1">) for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="s1">&#39;ASN lookup failed (DNS {0}) for {1}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">except</span><span class="p">:</span>
 
             <span class="k">raise</span> <span class="n">ASNLookupError</span><span class="p">(</span>
-                <span class="s1">&#39;ASN lookup failed for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span>
+                <span class="s1">&#39;ASN lookup failed for {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">)</span>
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Net.get_asn_whois"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.net.Net.get_asn_whois">[docs]</a>    <span class="k">def</span> <span class="nf">get_asn_whois</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -440,7 +443,8 @@
 
                 <span class="c1"># Query the Cymru whois server, and store the results.</span>
                 <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">((</span>
-                    <span class="s1">&#39; -r -a -c -p -f -o </span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="s1">&#39; -r -a -c -p -f -o {0}{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
 
                 <span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -467,7 +471,8 @@
             <span class="k">if</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RIR_WHOIS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
                 <span class="k">raise</span> <span class="n">ASNRegistryError</span><span class="p">(</span>
-                    <span class="s1">&#39;ASN registry </span><span class="si">%r</span><span class="s1"> is not known.&#39;</span> <span class="o">%</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span>
+                    <span class="s1">&#39;ASN registry {0} is not known.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">])</span>
                 <span class="p">)</span>
 
             <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;asn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39; </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -483,13 +488,13 @@
             <span class="k">if</span> <span class="n">retry_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ASN query retrying (count: {0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">retry_count</span><span class="p">))</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">retry_count</span><span class="p">)))</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_asn_whois</span><span class="p">(</span><span class="n">retry_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
                 <span class="k">raise</span> <span class="n">ASNLookupError</span><span class="p">(</span>
-                    <span class="s1">&#39;ASN lookup failed for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span>
+                    <span class="s1">&#39;ASN lookup failed for {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">)</span>
                 <span class="p">)</span>
 
         <span class="k">except</span> <span class="n">ASNRegistryError</span><span class="p">:</span>
@@ -499,7 +504,7 @@
         <span class="k">except</span><span class="p">:</span>
 
             <span class="k">raise</span> <span class="n">ASNLookupError</span><span class="p">(</span>
-                <span class="s1">&#39;ASN lookup failed for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span>
+                <span class="s1">&#39;ASN lookup failed for {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">)</span>
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Net.get_whois"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.net.Net.get_whois">[docs]</a>    <span class="k">def</span> <span class="nf">get_whois</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asn_registry</span><span class="o">=</span><span class="s1">&#39;arin&#39;</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -533,7 +538,7 @@
 
             <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">server</span> <span class="ow">in</span> <span class="n">srv</span> <span class="k">for</span> <span class="n">srv</span> <span class="ow">in</span> <span class="p">(</span><span class="n">BLACKLIST</span><span class="p">,</span> <span class="n">extra_bl</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="n">BlacklistError</span><span class="p">(</span>
-                    <span class="s1">&#39;The server </span><span class="si">%r</span><span class="s1"> is blacklisted.&#39;</span> <span class="o">%</span> <span class="n">server</span>
+                    <span class="s1">&#39;The server {0} is blacklisted.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">server</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -550,7 +555,7 @@
             <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span>
             <span class="k">if</span> <span class="n">asn_registry</span> <span class="o">==</span> <span class="s1">&#39;arin&#39;</span><span class="p">:</span>
 
-                <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;n + </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">query</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;n + {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
 
             <span class="c1"># Query the whois server, and store the results.</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
@@ -589,14 +594,14 @@
             <span class="k">if</span> <span class="n">retry_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;WHOIS query retrying (count: {0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">retry_count</span><span class="p">))</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">retry_count</span><span class="p">)))</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_whois</span><span class="p">(</span><span class="n">asn_registry</span><span class="p">,</span> <span class="n">retry_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span>
                                       <span class="n">port</span><span class="p">,</span> <span class="n">extra_blacklist</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
                 <span class="k">raise</span> <span class="n">WhoisLookupError</span><span class="p">(</span>
-                    <span class="s1">&#39;WHOIS lookup failed for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span>
+                    <span class="s1">&#39;WHOIS lookup failed for {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">)</span>
                 <span class="p">)</span>
 
         <span class="k">except</span> <span class="n">BlacklistError</span><span class="p">:</span>
@@ -606,10 +611,11 @@
         <span class="k">except</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
 
             <span class="k">raise</span> <span class="n">WhoisLookupError</span><span class="p">(</span>
-                <span class="s1">&#39;WHOIS lookup failed for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span>
+                <span class="s1">&#39;WHOIS lookup failed for {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">)</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Net.get_http_json"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.net.Net.get_http_json">[docs]</a>    <span class="k">def</span> <span class="nf">get_http_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="Net.get_http_json"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.net.Net.get_http_json">[docs]</a>    <span class="k">def</span> <span class="nf">get_http_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">rate_limit_timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+                      <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The function for retrieving a json result via HTTP.</span>
 
@@ -617,45 +623,95 @@
 <span class="sd">            url: The URL to retrieve.</span>
 <span class="sd">            retry_count: The number of times to retry in case socket errors,</span>
 <span class="sd">                timeouts, connection resets, etc. are encountered.</span>
+<span class="sd">            rate_limit_timeout: The number of seconds to wait before retrying</span>
+<span class="sd">                when a rate limit notice is returned via rdap+json.</span>
+<span class="sd">            headers: The HTTP headers dictionary. The Accept header defaults</span>
+<span class="sd">                to &#39;application/rdap+json&#39;.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Dictionary: The data in json format.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            HTTPLookupError: The HTTP lookup failed.</span>
+<span class="sd">            HTTPRateLimitError: The HTTP request rate limited and retries</span>
+<span class="sd">                were exhausted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/rdap+json&#39;</span><span class="p">}</span>
 
         <span class="k">try</span><span class="p">:</span>
 
             <span class="c1"># Create the connection for the whois query.</span>
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;HTTP query for {0} at {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
-            <span class="n">conn</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/rdap+json&#39;</span><span class="p">})</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">readall</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">readall</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-                <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">))</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Tests written but commented out. I do not want to send a</span>
+                <span class="c1"># flood of requests on every test.</span>
+                <span class="k">for</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;notices&#39;</span><span class="p">]:</span>  <span class="c1"># pragma: no cover</span>
+                    <span class="k">if</span> <span class="n">tmp</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Rate Limit Notice&#39;</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;RDAP query rate limit exceeded.&#39;</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">retry_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Waiting {0} seconds...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                <span class="nb">str</span><span class="p">(</span><span class="n">rate_limit_timeout</span><span class="p">)))</span>
+
+                            <span class="n">sleep</span><span class="p">(</span><span class="n">rate_limit_timeout</span><span class="p">)</span>
+                            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_http_json</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
+                                                      <span class="n">retry_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                                                      <span class="n">rate_limit_timeout</span><span class="p">,</span>
+                                                      <span class="n">headers</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">HTTPRateLimitError</span><span class="p">(</span>
+                                <span class="s1">&#39;HTTP lookup failed for {0}. Rate limit &#39;</span>
+                                <span class="s1">&#39;exceeded, wait and try again (possibly a &#39;</span>
+                                <span class="s1">&#39;temporary block).&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+
+                <span class="k">pass</span>
 
             <span class="k">return</span> <span class="n">d</span>
 
-        <span class="k">except</span> <span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">URLError</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+
+            <span class="c1"># Check needed for Python 2.6, also why URLError is caught.</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span><span class="p">,</span> <span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">)):</span>
+                    <span class="k">raise</span> <span class="n">HTTPLookupError</span><span class="p">(</span><span class="s1">&#39;HTTP lookup failed for {0}.&#39;</span>
+                                          <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+
+                <span class="k">pass</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;HTTP query socket error: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">retry_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;HTTP query retrying (count: {0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">retry_count</span><span class="p">))</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">retry_count</span><span class="p">)))</span>
 
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_http_json</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">retry_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_http_json</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">retry_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                                          <span class="n">rate_limit_timeout</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
-                <span class="k">raise</span> <span class="n">HTTPLookupError</span><span class="p">(</span><span class="s1">&#39;HTTP lookup failed for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">url</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">HTTPLookupError</span><span class="p">(</span><span class="s1">&#39;HTTP lookup failed for {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">url</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">HTTPLookupError</span><span class="p">,</span> <span class="n">HTTPRateLimitError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+
+            <span class="k">raise</span> <span class="n">e</span>
 
         <span class="k">except</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
 
-            <span class="k">raise</span> <span class="n">HTTPLookupError</span><span class="p">(</span><span class="s1">&#39;HTTP lookup failed for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">url</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">HTTPLookupError</span><span class="p">(</span><span class="s1">&#39;HTTP lookup failed for {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Net.get_host"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.net.Net.get_host">[docs]</a>    <span class="k">def</span> <span class="nf">get_host</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -695,23 +751,23 @@
             <span class="k">if</span> <span class="n">retry_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Host query retrying (count: {0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">retry_count</span><span class="p">))</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">retry_count</span><span class="p">)))</span>
 
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_host</span><span class="p">(</span><span class="n">retry_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
                 <span class="k">raise</span> <span class="n">HostLookupError</span><span class="p">(</span>
-                    <span class="s1">&#39;Host lookup failed for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span>
+                    <span class="s1">&#39;Host lookup failed for {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">)</span>
                 <span class="p">)</span>
 
         <span class="k">except</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
 
             <span class="k">raise</span> <span class="n">HostLookupError</span><span class="p">(</span>
-                <span class="s1">&#39;Host lookup failed for </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span>
+                <span class="s1">&#39;Host lookup failed for {0}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">)</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Net.lookup_asn"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.net.Net.lookup_asn">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_asn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="Net.lookup_asn"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.net.Net.lookup_asn">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_asn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">asn_alts</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The wrapper function for retrieving and parsing ASN information for an</span>
 <span class="sd">        IP address.</span>
@@ -719,6 +775,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            retry_count: The number of times to retry in case socket errors,</span>
 <span class="sd">                timeouts, connection resets, etc. are encountered.</span>
+<span class="sd">            asn_alts: Array of additional lookup types to attempt if the</span>
+<span class="sd">                ASN dns lookup fails. Allow permutations must be enabled.</span>
+<span class="sd">                Defaults to all [&#39;whois&#39;, &#39;http&#39;].</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Tuple:</span>
@@ -731,6 +790,8 @@
 <span class="sd">            ASNRegistryError: ASN registry does not match.</span>
 <span class="sd">            HTTPLookupError: The HTTP lookup failed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">lookups</span> <span class="o">=</span> <span class="n">asn_alts</span> <span class="k">if</span> <span class="n">asn_alts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;whois&#39;</span><span class="p">,</span> <span class="s1">&#39;http&#39;</span><span class="p">]</span>
 
         <span class="c1"># Initialize the response.</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">None</span>
@@ -750,67 +811,82 @@
                                        <span class="s1">&#39;Permutations not allowed.&#39;</span><span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;whois&#39;</span> <span class="ow">in</span> <span class="n">lookups</span><span class="p">:</span>
 
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ASN DNS lookup failed, trying ASN WHOIS: &#39;</span>
-                          <span class="s1">&#39;{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-                <span class="n">asn_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_asn_whois</span><span class="p">(</span><span class="n">retry_count</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ASN DNS lookup failed, trying ASN WHOIS: &#39;</span>
+                              <span class="s1">&#39;{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                    <span class="n">asn_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_asn_whois</span><span class="p">(</span><span class="n">retry_count</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="k">raise</span> <span class="n">ASNLookupError</span>
 
             <span class="k">except</span> <span class="p">(</span><span class="n">ASNLookupError</span><span class="p">,</span> <span class="n">ASNRegistryError</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
 
-                <span class="c1"># Lets attempt to get the ASN registry information from ARIN.</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ASN WHOIS lookup failed, trying ASN via HTTP&#39;</span><span class="p">)</span>
-                <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_http_json</span><span class="p">(</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">ARIN</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">),</span>
-                    <span class="n">retry_count</span>
-                <span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;http&#39;</span> <span class="ow">in</span> <span class="n">lookups</span><span class="p">:</span>
 
-                <span class="n">asn_data</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s1">&#39;asn_registry&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                    <span class="s1">&#39;asn&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                    <span class="s1">&#39;asn_cidr&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                    <span class="s1">&#39;asn_country_code&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                    <span class="s1">&#39;asn_date&#39;</span><span class="p">:</span> <span class="bp">None</span>
-                <span class="p">}</span>
+                    <span class="c1"># Lets attempt to get the ASN registry information from</span>
+                    <span class="c1"># ARIN.</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ASN WHOIS lookup failed, trying ASN via HTTP&#39;</span><span class="p">)</span>
+                    <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_http_json</span><span class="p">(</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">ARIN</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">),</span>
+                        <span class="n">retry_count</span><span class="p">,</span>
+                        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
+                    <span class="p">)</span>
 
-                <span class="k">try</span><span class="p">:</span>
-
-                    <span class="n">net_list</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;nets&#39;</span><span class="p">][</span><span class="s1">&#39;net&#39;</span><span class="p">]</span>
-
-                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">net_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-
-                        <span class="n">net_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">net_list</span><span class="p">]</span>
-
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-
-                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No networks found&#39;</span><span class="p">)</span>
-                    <span class="n">net_list</span> <span class="o">=</span> <span class="p">[]</span>
-
-                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">net_list</span><span class="p">:</span>
+                    <span class="n">asn_data</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s1">&#39;asn_registry&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                        <span class="s1">&#39;asn&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                        <span class="s1">&#39;asn_cidr&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                        <span class="s1">&#39;asn_country_code&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                        <span class="s1">&#39;asn_date&#39;</span><span class="p">:</span> <span class="bp">None</span>
+                    <span class="p">}</span>
 
                     <span class="k">try</span><span class="p">:</span>
 
-                        <span class="k">if</span> <span class="n">n</span><span class="p">[</span><span class="s1">&#39;orgRef&#39;</span><span class="p">][</span><span class="s1">&#39;@handle&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;ARIN&#39;</span><span class="p">,</span> <span class="s1">&#39;VR-ARIN&#39;</span><span class="p">):</span>
+                        <span class="n">net_list</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;nets&#39;</span><span class="p">][</span><span class="s1">&#39;net&#39;</span><span class="p">]</span>
 
-                            <span class="n">asn_data</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;arin&#39;</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">net_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
 
-                        <span class="k">elif</span> <span class="n">n</span><span class="p">[</span><span class="s1">&#39;orgRef&#39;</span><span class="p">][</span><span class="s1">&#39;@handle&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;RIPE&#39;</span><span class="p">:</span>
+                            <span class="n">net_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">net_list</span><span class="p">]</span>
 
-                            <span class="n">asn_data</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ripencc&#39;</span>
+                    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 
-                        <span class="k">else</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No networks found&#39;</span><span class="p">)</span>
+                        <span class="n">net_list</span> <span class="o">=</span> <span class="p">[]</span>
 
-                            <span class="n">test</span> <span class="o">=</span> <span class="n">RIR_WHOIS</span><span class="p">[</span><span class="n">n</span><span class="p">[</span><span class="s1">&#39;orgRef&#39;</span><span class="p">][</span><span class="s1">&#39;@handle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
-                            <span class="n">asn_data</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                <span class="n">n</span><span class="p">[</span><span class="s1">&#39;orgRef&#39;</span><span class="p">][</span><span class="s1">&#39;@handle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-                            <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">net_list</span><span class="p">:</span>
 
-                    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
 
-                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Could not parse ASN registry via HTTP: {0}&#39;</span>
-                                  <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-                        <span class="k">raise</span> <span class="n">ASNRegistryError</span><span class="p">(</span><span class="s1">&#39;ASN registry lookup failed.&#39;</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">n</span><span class="p">[</span><span class="s1">&#39;orgRef&#39;</span><span class="p">][</span><span class="s1">&#39;@handle&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;ARIN&#39;</span><span class="p">,</span> <span class="s1">&#39;VR-ARIN&#39;</span><span class="p">):</span>
 
-                    <span class="k">break</span>
+                                <span class="n">asn_data</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;arin&#39;</span>
+
+                            <span class="k">elif</span> <span class="n">n</span><span class="p">[</span><span class="s1">&#39;orgRef&#39;</span><span class="p">][</span><span class="s1">&#39;@handle&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;RIPE&#39;</span><span class="p">:</span>
+
+                                <span class="n">asn_data</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ripencc&#39;</span>
+
+                            <span class="k">else</span><span class="p">:</span>
+
+                                <span class="n">test</span> <span class="o">=</span> <span class="n">RIR_WHOIS</span><span class="p">[</span><span class="n">n</span><span class="p">[</span><span class="s1">&#39;orgRef&#39;</span><span class="p">][(</span><span class="s1">&#39;@handle&#39;</span>
+                                                              <span class="p">)]</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+                                <span class="n">asn_data</span><span class="p">[</span><span class="s1">&#39;asn_registry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                    <span class="n">n</span><span class="p">[</span><span class="s1">&#39;orgRef&#39;</span><span class="p">][</span><span class="s1">&#39;@handle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                                <span class="p">)</span>
+
+                        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+
+                            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Could not parse ASN registry via HTTP: &#39;</span>
+                                      <span class="s1">&#39;{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+                            <span class="k">raise</span> <span class="n">ASNRegistryError</span><span class="p">(</span><span class="s1">&#39;ASN registry lookup failed&#39;</span>
+                                                   <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+
+                        <span class="k">break</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="k">raise</span> <span class="n">ASNRegistryError</span><span class="p">(</span><span class="s1">&#39;ASN registry lookup failed.&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">asn_data</span><span class="p">,</span> <span class="n">response</span></div></div>
 </pre></div>
@@ -846,7 +922,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.11.2',
+            VERSION:'0.12.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

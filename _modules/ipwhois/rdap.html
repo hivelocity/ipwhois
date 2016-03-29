@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ipwhois.rdap &mdash; ipwhois 0.11.2 documentation</title>
+  <title>ipwhois.rdap &mdash; ipwhois 0.12.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ipwhois 0.11.2 documentation" href="../../index.html"/>
+    <link rel="top" title="ipwhois 0.12.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.11.2
+                0.12.0
               </div>
             
           
@@ -168,6 +168,7 @@
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">ipv4_lstrip_zeros</span><span class="p">,</span> <span class="n">calculate_cidr</span><span class="p">,</span> <span class="n">unique_everseen</span>
 <span class="kn">from</span> <span class="nn">.net</span> <span class="kn">import</span> <span class="n">ip_address</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">json</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
@@ -646,7 +647,7 @@
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;IP address data incomplete. Data parsed prior to &#39;</span>
-                      <span class="s1">&#39;exception: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">))</span>
+                      <span class="s1">&#39;exception: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">)))</span>
             <span class="k">raise</span> <span class="n">InvalidNetworkObject</span><span class="p">(</span><span class="s1">&#39;IP address data is missing for RDAP &#39;</span>
                                        <span class="s1">&#39;network object.&#39;</span><span class="p">)</span>
 
@@ -795,7 +796,8 @@
                            <span class="s1">&#39;ipwhois.net.Net&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RDAP.lookup"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.rdap.RDAP.lookup">[docs]</a>    <span class="k">def</span> <span class="nf">lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inc_raw</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">asn_data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-               <span class="n">excluded_entities</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bootstrap</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+               <span class="n">excluded_entities</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bootstrap</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+               <span class="n">rate_limit_timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The function for retrieving and parsing information for an IP</span>
 <span class="sd">        address via RDAP (HTTP).</span>
@@ -806,13 +808,15 @@
 <span class="sd">            retry_count: The number of times to retry in case socket errors,</span>
 <span class="sd">                timeouts, connection resets, etc. are encountered.</span>
 <span class="sd">            asn_data: Result dictionary from ipwhois.net.Net.lookup_asn().</span>
-<span class="sd">                May be optional in the future when utilizing RDAP bootstrap.</span>
+<span class="sd">                Optional if the bootstrap parameter is True.</span>
 <span class="sd">            depth: How many levels deep to run queries when additional</span>
 <span class="sd">                referenced objects are found.</span>
 <span class="sd">            excluded_entities: A list of entity handles to not perform lookups.</span>
 <span class="sd">            response: Optional response object, this bypasses the RDAP lookup.</span>
 <span class="sd">            bootstrap: If True, performs lookups via ARIN bootstrap rather</span>
 <span class="sd">                than lookups based on ASN data.</span>
+<span class="sd">            rate_limit_timeout: The number of seconds to wait before retrying</span>
+<span class="sd">                when a rate limit notice is returned via rdap+json.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Dictionary:</span>
@@ -859,7 +863,7 @@
 
             <span class="c1"># Retrieve the whois data.</span>
             <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_net</span><span class="o">.</span><span class="n">get_http_json</span><span class="p">(</span>
-                <span class="n">ip_url</span><span class="p">,</span> <span class="n">retry_count</span>
+                <span class="n">ip_url</span><span class="p">,</span> <span class="n">retry_count</span><span class="p">,</span> <span class="n">rate_limit_timeout</span><span class="o">=</span><span class="n">rate_limit_timeout</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">inc_raw</span><span class="p">:</span>
@@ -899,7 +903,8 @@
 
         <span class="k">if</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp_objects</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Parsing RDAP sub-entities to depth: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">depth</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Parsing RDAP sub-entities to depth: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span>
+                <span class="n">depth</span><span class="p">)))</span>
 
         <span class="k">while</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp_objects</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 
@@ -926,7 +931,8 @@
 
                                 <span class="c1"># RDAP entity query</span>
                                 <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_net</span><span class="o">.</span><span class="n">get_http_json</span><span class="p">(</span>
-                                    <span class="n">entity_url</span><span class="p">,</span> <span class="n">retry_count</span>
+                                    <span class="n">entity_url</span><span class="p">,</span> <span class="n">retry_count</span><span class="p">,</span>
+                                    <span class="n">rate_limit_timeout</span><span class="o">=</span><span class="n">rate_limit_timeout</span>
                                 <span class="p">)</span>
 
                                 <span class="c1"># Parse the entity</span>
@@ -986,7 +992,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.11.2',
+            VERSION:'0.12.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

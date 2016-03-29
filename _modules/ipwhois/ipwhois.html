@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ipwhois.ipwhois &mdash; ipwhois 0.11.2 documentation</title>
+  <title>ipwhois.ipwhois &mdash; ipwhois 0.12.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ipwhois 0.11.2 documentation" href="../../index.html"/>
+    <link rel="top" title="ipwhois 0.12.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.11.2
+                0.12.0
               </div>
             
           
@@ -198,13 +198,26 @@
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">return</span> <span class="s1">&#39;IPWhois(</span><span class="si">%r</span><span class="s1">, </span><span class="si">%r</span><span class="s1">, </span><span class="si">%r</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">opener</span>
+        <span class="k">return</span> <span class="s1">&#39;IPWhois({0}, {1}, {2})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">),</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">opener</span><span class="p">)</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="IPWhois.lookup"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.ipwhois.IPWhois.lookup">[docs]</a>    <span class="k">def</span> <span class="nf">lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inc_raw</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">get_referral</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-               <span class="n">extra_blacklist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ignore_referral_errors</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-               <span class="n">field_list</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="IPWhois.lookup"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.ipwhois.IPWhois.lookup">[docs]</a>    <span class="k">def</span> <span class="nf">lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Temporary wrapper for legacy whois lookups (moved to</span>
+<span class="sd">        IPWhois.lookup_whois()). This will be removed in a future</span>
+<span class="sd">        release (TBD).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;IPWhois.lookup() has been deprecated and will be removed. &quot;</span>
+             <span class="s2">&quot;You should now use IPWhois.lookup_whois() for legacy whois &quot;</span>
+             <span class="s2">&quot;lookups.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_whois</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IPWhois.lookup_whois"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.ipwhois.IPWhois.lookup_whois">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_whois</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inc_raw</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">get_referral</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                     <span class="n">extra_blacklist</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ignore_referral_errors</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                     <span class="n">field_list</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">asn_alts</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The function for retrieving and parsing whois information for an IP</span>
 <span class="sd">        address via port 43 (WHOIS).</span>
@@ -223,6 +236,9 @@
 <span class="sd">            field_list: If provided, a list of fields to parse:</span>
 <span class="sd">                [&#39;name&#39;, &#39;handle&#39;, &#39;description&#39;, &#39;country&#39;, &#39;state&#39;, &#39;city&#39;,</span>
 <span class="sd">                &#39;address&#39;, &#39;postal_code&#39;, &#39;emails&#39;, &#39;created&#39;, &#39;updated&#39;]</span>
+<span class="sd">            asn_alts: Array of additional lookup types to attempt if the</span>
+<span class="sd">                ASN dns lookup fails. Allow permutations must be enabled.</span>
+<span class="sd">                Defaults to all [&#39;whois&#39;, &#39;http&#39;].</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Dictionary:</span>
@@ -253,7 +269,7 @@
 
         <span class="c1"># Retrieve the ASN information.</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ASN lookup for {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">))</span>
-        <span class="n">asn_data</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">lookup_asn</span><span class="p">(</span><span class="n">retry_count</span><span class="p">)</span>
+        <span class="n">asn_data</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">lookup_asn</span><span class="p">(</span><span class="n">retry_count</span><span class="p">,</span> <span class="n">asn_alts</span><span class="p">)</span>
 
         <span class="c1"># Add the ASN information to the return dictionary.</span>
         <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">asn_data</span><span class="p">)</span>
@@ -272,7 +288,8 @@
         <span class="k">return</span> <span class="n">results</span></div>
 
 <div class="viewcode-block" id="IPWhois.lookup_rdap"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.ipwhois.IPWhois.lookup_rdap">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_rdap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inc_raw</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">retry_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                    <span class="n">excluded_entities</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bootstrap</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                    <span class="n">excluded_entities</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bootstrap</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="n">rate_limit_timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">asn_alts</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The function for retrieving and parsing whois information for an IP</span>
 <span class="sd">        address via HTTP (RDAP).</span>
@@ -291,6 +308,11 @@
 <span class="sd">            bootstrap: If True, performs lookups via ARIN bootstrap rather</span>
 <span class="sd">                than lookups based on ASN data. ASN lookups are not performed</span>
 <span class="sd">                and no output for any of the asn* fields is provided.</span>
+<span class="sd">            rate_limit_timeout: The number of seconds to wait before retrying</span>
+<span class="sd">                when a rate limit notice is returned via rdap+json.</span>
+<span class="sd">            asn_alts: Array of additional lookup types to attempt if the</span>
+<span class="sd">                ASN dns lookup fails. Allow permutations must be enabled.</span>
+<span class="sd">                Defaults to all [&#39;whois&#39;, &#39;http&#39;].</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Dictionary:</span>
@@ -321,7 +343,7 @@
 
             <span class="c1"># Retrieve the ASN information.</span>
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ASN lookup for {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">))</span>
-            <span class="n">asn_data</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">lookup_asn</span><span class="p">(</span><span class="n">retry_count</span><span class="p">)</span>
+            <span class="n">asn_data</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">lookup_asn</span><span class="p">(</span><span class="n">retry_count</span><span class="p">,</span> <span class="n">asn_alts</span><span class="p">)</span>
 
             <span class="c1"># Add the ASN information to the return dictionary.</span>
             <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">asn_data</span><span class="p">)</span>
@@ -330,7 +352,8 @@
         <span class="n">rdap</span> <span class="o">=</span> <span class="n">RDAP</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;RDAP lookup for {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address_str</span><span class="p">))</span>
         <span class="n">rdap_data</span> <span class="o">=</span> <span class="n">rdap</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">inc_raw</span><span class="p">,</span> <span class="n">retry_count</span><span class="p">,</span> <span class="n">asn_data</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span>
-                                <span class="n">excluded_entities</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">bootstrap</span><span class="p">)</span>
+                                <span class="n">excluded_entities</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">bootstrap</span><span class="p">,</span>
+                                <span class="n">rate_limit_timeout</span><span class="p">)</span>
 
         <span class="c1"># Add the RDAP information to the return dictionary.</span>
         <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rdap_data</span><span class="p">)</span>
@@ -369,7 +392,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.11.2',
+            VERSION:'0.12.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

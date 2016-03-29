@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ipwhois &mdash; ipwhois 0.11.2 documentation</title>
+  <title>ipwhois &mdash; ipwhois 0.12.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ipwhois 0.11.2 documentation" href="index.html"/>
+    <link rel="top" title="ipwhois 0.12.0 documentation" href="index.html"/>
         <link rel="next" title="Contributing" href="CONTRIBUTING.html"/>
         <link rel="prev" title="ipwhois" href="index.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.11.2
+                0.12.0
               </div>
             
           
@@ -95,6 +95,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#rdap-http">RDAP (HTTP)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#basic-usage">Basic usage</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#use-a-proxy">Use a proxy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tweaking-queries-for-your-network">Tweaking queries for your network</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#legacy-whois">Legacy Whois</a><ul>
@@ -183,6 +184,8 @@
 for IPv4 and IPv6 addresses.</p>
 <p>RDAP is the recommended query method as of v0.11.0. Please see the
 <a class="reference external" href="#upgrading-from-0-10-to-0-11">upgrade info</a>.</p>
+<p>IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
+lookups were moved to IPWhois.lookup_whois().</p>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -231,85 +234,119 @@ for IPv4 and IPv6 addresses.</p>
 <span class="go">&gt;&gt;&gt;&gt; pprint(results)</span>
 
 <span class="go">{</span>
-<span class="go">&#39;entities&#39;: [&#39;GOGL&#39;],</span>
-<span class="go">&#39;network&#39;: {</span>
-<span class="go">    &#39;country&#39;: None,</span>
-<span class="go">     &#39;end_address&#39;: &#39;74.125.255.255&#39;,</span>
-<span class="go">     &#39;events&#39;: [{&#39;action&#39;: &#39;last changed&#39;,</span>
-<span class="go">                 &#39;actor&#39;: None,</span>
-<span class="go">                 &#39;timestamp&#39;: &#39;2012-02-24T09:44:34-05:00&#39;},</span>
-<span class="go">                {&#39;action&#39;: &#39;registration&#39;,</span>
-<span class="go">                 &#39;actor&#39;: None,</span>
-<span class="go">                 &#39;timestamp&#39;: &#39;2007-03-13T12:09:54-04:00&#39;}],</span>
-<span class="go">     &#39;handle&#39;: &#39;NET-74-125-0-0-1&#39;,</span>
-<span class="go">     &#39;ip_version&#39;: &#39;v4&#39;,</span>
-<span class="go">     &#39;links&#39;: [&#39;https://rdap.arin.net/registry/ip/074.125.000.000&#39;,</span>
-<span class="go">               &#39;http://whois.arin.net/rest/net/NET-74-125-0-0-1&#39;],</span>
-<span class="go">     &#39;name&#39;: &#39;GOOGLE&#39;,</span>
-<span class="go">     &#39;notices&#39;: [{&#39;description&#39;: &#39;By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use&#39;,</span>
-<span class="go">                  &#39;title&#39;: &#39;Terms of Service&#39;}],</span>
-<span class="go">     &#39;parent_handle&#39;: &#39;NET-74-0-0-0-0&#39;,</span>
-<span class="go">     &#39;raw&#39;: None,</span>
-<span class="go">     &#39;remarks&#39;: None,</span>
-<span class="go">     &#39;start_address&#39;: &#39;74.125.0.0&#39;,</span>
-<span class="go">     &#39;status&#39;: None,</span>
-<span class="go">     &#39;type&#39;: None</span>
-<span class="go">},</span>
-<span class="go">&#39;objects&#39;: {</span>
-<span class="go">    &#39;GOGL&#39;: {&#39;contact&#39;: {&#39;address&#39;: [{</span>
-<span class="go">        &#39;type&#39;: None,</span>
-<span class="go">        &#39;value&#39;: &#39;1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES&#39;}],</span>
-<span class="go">        &#39;email&#39;: None,</span>
-<span class="go">        &#39;kind&#39;: &#39;org&#39;,</span>
-<span class="go">        &#39;name&#39;: &#39;Google Inc.&#39;,</span>
-<span class="go">        &#39;phone&#39;: None,</span>
-<span class="go">        &#39;role&#39;: None,</span>
-<span class="go">        &#39;title&#39;: None},</span>
-<span class="go">        &#39;entities&#39;: [&#39;ZG39-ARIN&#39;],</span>
-<span class="go">        &#39;events&#39;: [{&#39;action&#39;: &#39;last changed&#39;,</span>
-<span class="go">                  &#39;actor&#39;: None,</span>
-<span class="go">                  &#39;timestamp&#39;: &#39;2013-08-07T19:59:17-04:00&#39;},</span>
-<span class="go">                 {&#39;action&#39;: &#39;registration&#39;,</span>
-<span class="go">                  &#39;actor&#39;: None,</span>
-<span class="go">                  &#39;timestamp&#39;: &#39;2000-03-30T00:00:00-05:00&#39;}],</span>
-<span class="go">        &#39;events_actor&#39;: None,</span>
-<span class="go">        &#39;handle&#39;: &#39;GOGL&#39;,</span>
-<span class="go">        &#39;links&#39;: [&#39;https://rdap.arin.net/registry/entity/GOGL&#39;,</span>
-<span class="go">                &#39;http://whois.arin.net/rest/org/GOGL&#39;],</span>
-<span class="go">        &#39;notices&#39;: None,</span>
-<span class="go">        &#39;raw&#39;: None,</span>
-<span class="go">        &#39;remarks&#39;: None,</span>
-<span class="go">        &#39;roles&#39;: [&#39;registrant&#39;],</span>
-<span class="go">        &#39;status&#39;: None},</span>
-<span class="go">    &#39;ZG39-ARIN&#39;: {&#39;contact&#39;: {&#39;address&#39;: [{</span>
-<span class="go">        &#39;type&#39;: None,</span>
-<span class="go">        &#39;value&#39;: &#39;1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES&#39;}],</span>
-<span class="go">        &#39;email&#39;: [{&#39;type&#39;: None,</span>
-<span class="go">                  &#39;value&#39;: &#39;arin-contact@google.com&#39;}],</span>
-<span class="go">        &#39;kind&#39;: &#39;group&#39;,</span>
-<span class="go">        &#39;name&#39;: &#39;Google Inc&#39;,</span>
-<span class="go">        &#39;phone&#39;: [{&#39;type&#39;: [&#39;work&#39;,</span>
-<span class="go">                           &#39;voice&#39;],</span>
-<span class="go">                  &#39;value&#39;: &#39;+1-650-253-0000&#39;}],</span>
-<span class="go">        &#39;role&#39;: None,</span>
-<span class="go">        &#39;title&#39;: None},</span>
-<span class="go">        &#39;entities&#39;: None,</span>
-<span class="go">        &#39;events&#39;: [{&#39;action&#39;: &#39;last changed&#39;,</span>
-<span class="go">                   &#39;actor&#39;: None,</span>
-<span class="go">                   &#39;timestamp&#39;: &#39;2015-09-01T14:03:11-04:00&#39;},</span>
-<span class="go">                  {&#39;action&#39;: &#39;registration&#39;,</span>
-<span class="go">                   &#39;actor&#39;: None,</span>
-<span class="go">                   &#39;timestamp&#39;: &#39;2000-11-30T13:54:08-05:00&#39;}],</span>
-<span class="go">        &#39;events_actor&#39;: None,</span>
-<span class="go">        &#39;handle&#39;: &#39;ZG39-ARIN&#39;,</span>
-<span class="go">        &#39;links&#39;: [&#39;https://rdap.arin.net/registry/entity/ZG39-ARIN&#39;,</span>
-<span class="go">                 &#39;http://whois.arin.net/rest/poc/ZG39-ARIN&#39;],</span>
-<span class="go">        &#39;notices&#39;: [{&#39;description&#39;: &#39;By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use&#39;,</span>
-<span class="go">                    &#39;title&#39;: &#39;Terms of Service&#39;}],</span>
-<span class="go">        &#39;raw&#39;: None,</span>
-<span class="go">        &#39;remarks&#39;: None,</span>
-<span class="go">        &#39;roles&#39;: None,</span>
-<span class="go">        &#39;status&#39;: [&#39;validated&#39;]}},</span>
+<span class="go">&#39;asn&#39;: &#39;15169&#39;,</span>
+<span class="go">&#39;asn_cidr&#39;: &#39;74.125.225.0/24&#39;,</span>
+<span class="go">&#39;asn_country_code&#39;: &#39;US&#39;,</span>
+<span class="go">&#39;asn_date&#39;: &#39;2007-03-13&#39;,</span>
+<span class="go">&#39;asn_registry&#39;: &#39;arin&#39;,</span>
+<span class="go">&#39;entities&#39;: [u&#39;GOGL&#39;],</span>
+<span class="go">&#39;network&#39;: {&#39;cidr&#39;: &#39;74.125.0.0/16&#39;,</span>
+<span class="go">         &#39;country&#39;: None,</span>
+<span class="go">         &#39;end_address&#39;: &#39;74.125.255.255&#39;,</span>
+<span class="go">         &#39;events&#39;: [{&#39;action&#39;: u&#39;last changed&#39;,</span>
+<span class="go">                     &#39;actor&#39;: None,</span>
+<span class="go">                     &#39;timestamp&#39;: u&#39;2012-02-24T09:44:34-05:00&#39;},</span>
+<span class="go">                    {&#39;action&#39;: u&#39;registration&#39;,</span>
+<span class="go">                     &#39;actor&#39;: None,</span>
+<span class="go">                     &#39;timestamp&#39;: u&#39;2007-03-13T12:09:54-04:00&#39;}],</span>
+<span class="go">         &#39;handle&#39;: u&#39;NET-74-125-0-0-1&#39;,</span>
+<span class="go">         &#39;ip_version&#39;: u&#39;v4&#39;,</span>
+<span class="go">         &#39;links&#39;: [u&#39;https://rdap.arin.net/registry/ip/074.125.000.000&#39;,</span>
+<span class="go">                   u&#39;https://whois.arin.net/rest/net/NET-74-125-0-0-1&#39;],</span>
+<span class="go">         &#39;name&#39;: u&#39;GOOGLE&#39;,</span>
+<span class="go">         &#39;notices&#39;: [{&#39;description&#39;: u&#39;By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use&#39;,</span>
+<span class="go">                      &#39;links&#39;: [u&#39;https://www.arin.net/whois_tou.html&#39;],</span>
+<span class="go">                      &#39;title&#39;: u&#39;Terms of Service&#39;}],</span>
+<span class="go">         &#39;parent_handle&#39;: u&#39;NET-74-0-0-0-0&#39;,</span>
+<span class="go">         &#39;raw&#39;: None,</span>
+<span class="go">         &#39;remarks&#39;: None,</span>
+<span class="go">         &#39;start_address&#39;: &#39;74.125.0.0&#39;,</span>
+<span class="go">         &#39;status&#39;: None,</span>
+<span class="go">         &#39;type&#39;: None},</span>
+<span class="go">&#39;objects&#39;: {u&#39;ABUSE5250-ARIN&#39;: {&#39;contact&#39;: {&#39;address&#39;: [{&#39;type&#39;: None,</span>
+<span class="go">                                                      &#39;value&#39;: u&#39;1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES&#39;}],</span>
+<span class="go">                                         &#39;email&#39;: [{&#39;type&#39;: None,</span>
+<span class="go">                                                    &#39;value&#39;: u&#39;network-abuse@google.com&#39;}],</span>
+<span class="go">                                         &#39;kind&#39;: u&#39;group&#39;,</span>
+<span class="go">                                         &#39;name&#39;: u&#39;Abuse&#39;,</span>
+<span class="go">                                         &#39;phone&#39;: [{&#39;type&#39;: [u&#39;work&#39;,</span>
+<span class="go">                                                             u&#39;voice&#39;],</span>
+<span class="go">                                                    &#39;value&#39;: u&#39;+1-650-253-0000&#39;}],</span>
+<span class="go">                                         &#39;role&#39;: None,</span>
+<span class="go">                                         &#39;title&#39;: None},</span>
+<span class="go">                             &#39;entities&#39;: None,</span>
+<span class="go">                             &#39;events&#39;: [{&#39;action&#39;: u&#39;last changed&#39;,</span>
+<span class="go">                                         &#39;actor&#39;: None,</span>
+<span class="go">                                         &#39;timestamp&#39;: u&#39;2015-11-06T15:36:35-05:00&#39;},</span>
+<span class="go">                                        {&#39;action&#39;: u&#39;registration&#39;,</span>
+<span class="go">                                         &#39;actor&#39;: None,</span>
+<span class="go">                                         &#39;timestamp&#39;: u&#39;2015-11-06T15:36:35-05:00&#39;}],</span>
+<span class="go">                             &#39;events_actor&#39;: None,</span>
+<span class="go">                             &#39;handle&#39;: u&#39;ABUSE5250-ARIN&#39;,</span>
+<span class="go">                             &#39;links&#39;: [u&#39;https://rdap.arin.net/registry/entity/ABUSE5250-ARIN&#39;,</span>
+<span class="go">                                       u&#39;https://whois.arin.net/rest/poc/ABUSE5250-ARIN&#39;],</span>
+<span class="go">                             &#39;notices&#39;: [{&#39;description&#39;: u&#39;By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use&#39;,</span>
+<span class="go">                                          &#39;links&#39;: [u&#39;https://www.arin.net/whois_tou.html&#39;],</span>
+<span class="go">                                          &#39;title&#39;: u&#39;Terms of Service&#39;}],</span>
+<span class="go">                             &#39;raw&#39;: None,</span>
+<span class="go">                             &#39;remarks&#39;: [{&#39;description&#39;: u&#39;Please note that the recommended way to file abuse complaints are located in the following links.\r\n\r\nTo report abuse and illegal activity: https://www.google.com/intl/en_US/goodtoknow/online-safety/reporting-abuse/ \r\n\r\nFor legal requests: http://support.google.com/legal \r\n\r\nRegards,\r\nThe Google Team&#39;,</span>
+<span class="go">                                          &#39;links&#39;: None,</span>
+<span class="go">                                          &#39;title&#39;: u&#39;Registration Comments&#39;}],</span>
+<span class="go">                             &#39;roles&#39;: None,</span>
+<span class="go">                             &#39;status&#39;: [u&#39;validated&#39;]},</span>
+<span class="go">         u&#39;GOGL&#39;: {&#39;contact&#39;: {&#39;address&#39;: [{&#39;type&#39;: None,</span>
+<span class="go">                                            &#39;value&#39;: u&#39;1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES&#39;}],</span>
+<span class="go">                               &#39;email&#39;: None,</span>
+<span class="go">                               &#39;kind&#39;: u&#39;org&#39;,</span>
+<span class="go">                               &#39;name&#39;: u&#39;Google Inc.&#39;,</span>
+<span class="go">                               &#39;phone&#39;: None,</span>
+<span class="go">                               &#39;role&#39;: None,</span>
+<span class="go">                               &#39;title&#39;: None},</span>
+<span class="go">                   &#39;entities&#39;: [u&#39;ABUSE5250-ARIN&#39;, u&#39;ZG39-ARIN&#39;],</span>
+<span class="go">                   &#39;events&#39;: [{&#39;action&#39;: u&#39;last changed&#39;,</span>
+<span class="go">                               &#39;actor&#39;: None,</span>
+<span class="go">                               &#39;timestamp&#39;: u&#39;2015-11-06T15:45:54-05:00&#39;},</span>
+<span class="go">                              {&#39;action&#39;: u&#39;registration&#39;,</span>
+<span class="go">                               &#39;actor&#39;: None,</span>
+<span class="go">                               &#39;timestamp&#39;: u&#39;2000-03-30T00:00:00-05:00&#39;}],</span>
+<span class="go">                   &#39;events_actor&#39;: None,</span>
+<span class="go">                   &#39;handle&#39;: u&#39;GOGL&#39;,</span>
+<span class="go">                   &#39;links&#39;: [u&#39;https://rdap.arin.net/registry/entity/GOGL&#39;,</span>
+<span class="go">                             u&#39;https://whois.arin.net/rest/org/GOGL&#39;],</span>
+<span class="go">                   &#39;notices&#39;: None,</span>
+<span class="go">                   &#39;raw&#39;: None,</span>
+<span class="go">                   &#39;remarks&#39;: None,</span>
+<span class="go">                   &#39;roles&#39;: [u&#39;registrant&#39;],</span>
+<span class="go">                   &#39;status&#39;: None},</span>
+<span class="go">         u&#39;ZG39-ARIN&#39;: {&#39;contact&#39;: {&#39;address&#39;: [{&#39;type&#39;: None,</span>
+<span class="go">                                                 &#39;value&#39;: u&#39;1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES&#39;}],</span>
+<span class="go">                                    &#39;email&#39;: [{&#39;type&#39;: None,</span>
+<span class="go">                                               &#39;value&#39;: u&#39;arin-contact@google.com&#39;}],</span>
+<span class="go">                                    &#39;kind&#39;: u&#39;group&#39;,</span>
+<span class="go">                                    &#39;name&#39;: u&#39;Google Inc&#39;,</span>
+<span class="go">                                    &#39;phone&#39;: [{&#39;type&#39;: [u&#39;work&#39;,</span>
+<span class="go">                                                        u&#39;voice&#39;],</span>
+<span class="go">                                               &#39;value&#39;: u&#39;+1-650-253-0000&#39;}],</span>
+<span class="go">                                    &#39;role&#39;: None,</span>
+<span class="go">                                    &#39;title&#39;: None},</span>
+<span class="go">                        &#39;entities&#39;: None,</span>
+<span class="go">                        &#39;events&#39;: [{&#39;action&#39;: u&#39;last changed&#39;,</span>
+<span class="go">                                    &#39;actor&#39;: None,</span>
+<span class="go">                                    &#39;timestamp&#39;: u&#39;2015-09-01T14:03:11-04:00&#39;},</span>
+<span class="go">                                   {&#39;action&#39;: u&#39;registration&#39;,</span>
+<span class="go">                                    &#39;actor&#39;: None,</span>
+<span class="go">                                    &#39;timestamp&#39;: u&#39;2000-11-30T13:54:08-05:00&#39;}],</span>
+<span class="go">                        &#39;events_actor&#39;: None,</span>
+<span class="go">                        &#39;handle&#39;: u&#39;ZG39-ARIN&#39;,</span>
+<span class="go">                        &#39;links&#39;: [u&#39;https://rdap.arin.net/registry/entity/ZG39-ARIN&#39;,</span>
+<span class="go">                                  u&#39;https://whois.arin.net/rest/poc/ZG39-ARIN&#39;],</span>
+<span class="go">                        &#39;notices&#39;: [{&#39;description&#39;: u&#39;By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use&#39;,</span>
+<span class="go">                                     &#39;links&#39;: [u&#39;https://www.arin.net/whois_tou.html&#39;],</span>
+<span class="go">                                     &#39;title&#39;: u&#39;Terms of Service&#39;}],</span>
+<span class="go">                        &#39;raw&#39;: None,</span>
+<span class="go">                        &#39;remarks&#39;: None,</span>
+<span class="go">                        &#39;roles&#39;: None,</span>
+<span class="go">                        &#39;status&#39;: [u&#39;validated&#39;]}},</span>
 <span class="go">&#39;query&#39;: &#39;74.125.225.229&#39;,</span>
 <span class="go">&#39;raw&#39;: None</span>
 <span class="go">}</span>
@@ -326,6 +363,14 @@ for IPv4 and IPv6 addresses.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="tweaking-queries-for-your-network">
+<h4>Tweaking queries for your network<a class="headerlink" href="#tweaking-queries-for-your-network" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;&gt; from ipwhois import IPWhois</span>
+<span class="go">&gt;&gt;&gt;&gt; obj = IPWhois(&#39;74.125.225.229&#39;, timeout=10)</span>
+<span class="go">&gt;&gt;&gt;&gt; results = obj.lookup_rdap(retry_count=5, rate_limit_timeout=60)</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="legacy-whois">
 <h3>Legacy Whois<a class="headerlink" href="#legacy-whois" title="Permalink to this headline">¶</a></h3>
@@ -335,7 +380,7 @@ for IPv4 and IPv6 addresses.</p>
 <span class="go">&gt;&gt;&gt;&gt; from pprint import pprint</span>
 
 <span class="go">&gt;&gt;&gt;&gt; obj = IPWhois(&#39;74.125.225.229&#39;)</span>
-<span class="go">&gt;&gt;&gt;&gt; results = obj.lookup()</span>
+<span class="go">&gt;&gt;&gt;&gt; results = obj.lookup_whois()</span>
 <span class="go">&gt;&gt;&gt;&gt; pprint(results)</span>
 
 <span class="go">{</span>
@@ -373,7 +418,7 @@ for IPv4 and IPv6 addresses.</p>
 <span class="go">&gt;&gt;&gt;&gt; from pprint import pprint</span>
 
 <span class="go">&gt;&gt;&gt;&gt; obj = IPWhois(&#39;38.113.198.252&#39;)</span>
-<span class="go">&gt;&gt;&gt;&gt; results = obj.lookup(get_referral=True)</span>
+<span class="go">&gt;&gt;&gt;&gt; results = obj.lookup_whois(get_referral=True)</span>
 <span class="go">&gt;&gt;&gt;&gt; pprint(results)</span>
 
 <span class="go">{</span>
@@ -451,7 +496,7 @@ for IPv4 and IPv6 addresses.</p>
 
 <span class="go">&gt;&gt;&gt;&gt; countries = get_countries()</span>
 <span class="go">&gt;&gt;&gt;&gt; obj = IPWhois(&#39;74.125.225.229&#39;)</span>
-<span class="go">&gt;&gt;&gt;&gt; results = obj.lookup(False)</span>
+<span class="go">&gt;&gt;&gt;&gt; results = obj.lookup_whois(False)</span>
 <span class="go">&gt;&gt;&gt;&gt; print(countries[results[&#39;nets&#39;][0][&#39;country&#39;]])</span>
 
 <span class="go">United States</span>
@@ -538,6 +583,8 @@ RDAP lookup is the recommended method to maximize indexable values.</p>
 </div>
 <div class="section" id="legacy-whois-parsing">
 <h2>Legacy Whois Parsing<a class="headerlink" href="#legacy-whois-parsing" title="Permalink to this headline">¶</a></h2>
+<p>IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
+lookups were moved to IPWhois.lookup_whois().</p>
 <p>Parsing is currently limited to CIDR, country, name, handle, range,
 description, state, city, address, postal_code, abuse_emails, tech_emails,
 misc_emails, created and updated fields. This is assuming that those fields
@@ -619,7 +666,7 @@ domain support.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.11.2',
+            VERSION:'0.12.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
