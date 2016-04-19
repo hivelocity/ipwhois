@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Utilities &mdash; ipwhois 0.13.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ipwhois 0.13.0 documentation" href="index.html"/>
+        <link rel="next" title="CLI" href="CLI.html"/>
+        <link rel="prev" title="Legacy Whois Lookups" href="WHOIS.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ipwhois
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.13.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Readme</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="RDAP.html">RDAP API (Recommended)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WHOIS.html">Legacy Whois API</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Utilities API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#country-codes">Country Codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#human-readable-fields">Human Readable Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#retrieve-host-information-for-an-ip-address">Retrieve host information for an IP address</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retrieve-the-official-country-name-for-an-iso-3166-1-country-code">Retrieve the official country name for an ISO 3166-1 country code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parse-out-ip-addresses-and-ports-from-text-or-a-file">Parse out IP addresses and ports from text or a file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CLI.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CHANGES.html">Changelog</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CHANGES.old.html">Changelog (Archive)</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ipwhois</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Utilities</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="utilities">
+<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
+<p>There are many useful utilities included with the ipwhois library. This
+will be fully documented here in a future release.</p>
+<div class="section" id="country-codes">
+<h2>Country Codes<a class="headerlink" href="#country-codes" title="Permalink to this headline">¶</a></h2>
+<p>The legacy country code listing (iso_3166-1_list_en.xml) is no longer
+available as a free export from iso.org. Support has been added for
+iso_3166-1.csv, which is now the default.</p>
+<p>Use Legacy XML File:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;&gt; from ipwhois.utils import get_countries</span>
+<span class="go">&gt;&gt;&gt;&gt; countries = get_countries(is_legacy_xml=True)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="human-readable-fields">
+<h2>Human Readable Fields<a class="headerlink" href="#human-readable-fields" title="Permalink to this headline">¶</a></h2>
+<p>Human readable translations are available for all result fields (RDAP and
+Legacy Whois). Translations are currently limited to the short name (_short),
+the name (_name), and the description (_description).</p>
+<p>See the ipwhois CLI (ipwhois_cli.py) for an example. I plan to better document
+this functionality in a future release.</p>
+<p>Import the human readable translation dictionaries:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;&gt; from ipwhois.hr import (HR_ASN, HR_RDAP_COMMON, HR_RDAP, HR_WHOIS)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage-examples">
+<h2>Usage Examples<a class="headerlink" href="#usage-examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="retrieve-host-information-for-an-ip-address">
+<h3>Retrieve host information for an IP address<a class="headerlink" href="#retrieve-host-information-for-an-ip-address" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;&gt; from ipwhois import IPWhois</span>
+<span class="go">&gt;&gt;&gt;&gt; from pprint import pprint</span>
+
+<span class="go">&gt;&gt;&gt;&gt; obj = IPWhois(&#39;74.125.225.229&#39;)</span>
+<span class="go">&gt;&gt;&gt;&gt; results = obj.get_host()</span>
+<span class="go">&gt;&gt;&gt;&gt; pprint(results)</span>
+
+<span class="go">(&#39;dfw06s26-in-f5.1e100.net&#39;, [], [&#39;74.125.225.229&#39;])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="retrieve-the-official-country-name-for-an-iso-3166-1-country-code">
+<h3>Retrieve the official country name for an ISO 3166-1 country code<a class="headerlink" href="#retrieve-the-official-country-name-for-an-iso-3166-1-country-code" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;&gt; from ipwhois import IPWhois</span>
+<span class="go">&gt;&gt;&gt;&gt; from ipwhois.utils import get_countries</span>
+
+<span class="go">&gt;&gt;&gt;&gt; countries = get_countries()</span>
+<span class="go">&gt;&gt;&gt;&gt; obj = IPWhois(&#39;74.125.225.229&#39;)</span>
+<span class="go">&gt;&gt;&gt;&gt; results = obj.lookup_whois(False)</span>
+<span class="go">&gt;&gt;&gt;&gt; print(countries[results[&#39;nets&#39;][0][&#39;country&#39;]])</span>
+
+<span class="go">United States</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="parse-out-ip-addresses-and-ports-from-text-or-a-file">
+<h3>Parse out IP addresses and ports from text or a file<a class="headerlink" href="#parse-out-ip-addresses-and-ports-from-text-or-a-file" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt;&gt; from ipwhois.utils import unique_addresses</span>
+<span class="go">&gt;&gt;&gt;&gt; from pprint import pprint</span>
+
+<span class="go">&gt;&gt;&gt;&gt; input_data = (</span>
+<span class="go">    &#39;You can have IPs like 74.125.225.229, or 2001:4860:4860::8888&#39;</span>
+<span class="go">    &#39;Put a port at the end 74.125.225.229:80 or for IPv6: &#39;</span>
+<span class="go">    &#39;[2001:4860:4860::8888]:443 or even networks like &#39;</span>
+<span class="go">    &#39;74.125.0.0/16 and 2001:4860::/32.&#39;</span>
+<span class="go">)</span>
+
+<span class="go">&gt;&gt;&gt;&gt; results = unique_addresses(data=input_data, file_path=None)</span>
+<span class="go">&gt;&gt;&gt;&gt; pprint(results)</span>
+
+<span class="go">{&#39;2001:4860:4860::8888&#39;: {&#39;count&#39;: 2, &#39;ports&#39;: {&#39;443&#39;: 1}},</span>
+<span class="go"> &#39;2001:4860::/32&#39;: {&#39;count&#39;: 1, &#39;ports&#39;: {}},</span>
+<span class="go"> &#39;74.125.0.0/16&#39;: {&#39;count&#39;: 1, &#39;ports&#39;: {}},</span>
+<span class="go"> &#39;74.125.225.229&#39;: {&#39;count&#39;: 2, &#39;ports&#39;: {&#39;80&#39;: 1}}}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="CLI.html" class="btn btn-neutral float-right" title="CLI" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="WHOIS.html" class="btn btn-neutral" title="Legacy Whois Lookups" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Philip Hane.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.13.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

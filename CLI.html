@@ -1,0 +1,432 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>CLI &mdash; ipwhois 0.13.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ipwhois 0.13.0 documentation" href="index.html"/>
+        <link rel="next" title="Contributing" href="CONTRIBUTING.html"/>
+        <link rel="prev" title="Utilities" href="UTILS.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ipwhois
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.13.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Readme</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="RDAP.html">RDAP API (Recommended)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WHOIS.html">Legacy Whois API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="UTILS.html">Utilities API</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">License</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CHANGES.html">Changelog</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CHANGES.old.html">Changelog (Archive)</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ipwhois</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>CLI</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cli">
+<h1>CLI<a class="headerlink" href="#cli" title="Permalink to this headline">¶</a></h1>
+<p>ipwhois_cli.py is a command line interface for the ipwhois library. When
+using pip to install ipwhois, the CLI is installed to your Python
+environment Scripts directory.</p>
+<p>It currently has full ipwhois.py functionality. The others (net.py, rdap.py,
+utils.py, whois.py) will be included in a future release.</p>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>ipwhois_cli.py [-h] &#8211;addr IP [&#8211;whois] [&#8211;hr] [&#8211;show_name] [&#8211;colorize]</dt>
+<dd>[&#8211;timeout TIMEOUT] [&#8211;proxy_http &#8220;PROXY_HTTP&#8221;]
+[&#8211;proxy_https &#8220;PROXY_HTTPS&#8221;] [&#8211;disallow_permutations]
+[&#8211;inc_raw] [&#8211;retry_count RETRY_COUNT]
+[&#8211;asn_alts &#8220;ASN_ALTS&#8221;] [&#8211;extra_org_map &#8220;ASN_ALTS&#8221;]
+[&#8211;depth COLOR_DEPTH]
+[&#8211;excluded_entities &#8220;EXCLUDED_ENTITIES&#8221;] [&#8211;bootstrap]
+[&#8211;rate_limit_timeout RATE_LIMIT_TIMEOUT]
+[&#8211;get_referral] [&#8211;extra_blacklist &#8220;EXTRA_BLACKLIST&#8221;]
+[&#8211;ignore_referral_errors] [&#8211;field_list &#8220;FIELD_LIST&#8221;]</dd>
+</dl>
+<p>ipwhois CLI interface</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--whois</span></kbd></td>
+<td>Retrieve whois data via legacy Whois (port 43) instead
+of RDAP (default).</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Output options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--hr</span></kbd></td>
+<td>If set, returns results with human readable key
+translations.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--show_name</span></kbd></td>
+<td>If this and &#8211;hr are set, the key name is shown in
+parentheses after its short value</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--colorize</span></kbd></td>
+<td>If set, colorizes the output using ANSI. Should work
+in most platform consoles.</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>IPWhois settings:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--timeout <var>TIMEOUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The default timeout for socket connections in seconds.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--proxy_http <var>PROXY_HTTP</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The proxy HTTP address passed to request.ProxyHandler.
+User auth can be passed like
+&#8220;<a class="reference external" href="http://user:pass&#64;192.168.0.1:80">http://user:pass&#64;192.168.0.1:80</a>&#8220;</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--proxy_https <var>PROXY_HTTPS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The proxy HTTPS address passed to
+request.ProxyHandler. User auth can be passed like
+&#8220;<a class="reference external" href="https://user:pass&#64;192.168.0.1:443">https://user:pass&#64;192.168.0.1:443</a>&#8220;</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--disallow_permutations</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Disable additional methods if DNS lookups to Cymru
+fail. This is the opposite of the ipwhois
+allow_permutations, in order to enable
+allow_permutations by default in the CLI.</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Common settings (RDAP &amp; Legacy Whois):</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--inc_raw</span></kbd></td>
+<td>Include the raw whois results in the output.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--retry_count <var>RETRY_COUNT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The number of times to retry in case socket errors,
+timeouts, connection resets, etc. are encountered.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--asn_alts <var>ASN_ALTS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>A comma delimited list of additional lookup types to
+attempt if the ASN dns lookup fails. Allow
+permutations must be enabled. Defaults to all:
+&#8220;whois,http&#8221;</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--extra_org_map <var>ASN_ALTS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Dictionary mapping org handles to RIRs. This is for
+limited cases where ARIN REST (ASN fallback HTTP
+lookup) does not show an RIR as the org handle e.g.,
+DNIC (which is now the built in ORG_MAP) e.g.,
+{&#8220;DNIC&#8221;: &#8220;arin&#8221;}. Valid RIR values are (note the
+case-sensitive - this is meant to match the REST
+result): &#8216;ARIN&#8217;, &#8216;RIPE&#8217;, &#8216;apnic&#8217;, &#8216;lacnic&#8217;, &#8216;afrinic&#8217;</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>RDAP settings:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--depth <var>COLOR_DEPTH</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If not &#8211;whois, how many levels deep to run RDAP
+queries when additional referenced objects are found.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--excluded_entities <var>EXCLUDED_ENTITIES</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If not &#8211;whois, a comma delimited list of entity
+handles to not perform lookups.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--bootstrap</span></kbd></td>
+<td>If not &#8211;whois, performs lookups via ARIN bootstrap
+rather than lookups based on ASN data. ASN lookups are
+not performed and no output for any of the asn* fields
+is provided.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--rate_limit_timeout <var>RATE_LIMIT_TIMEOUT</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If not &#8211;whois, the number of seconds to wait before
+retrying when a rate limit notice is returned via
+rdap+json.</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Legacy Whois settings:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--get_referral</span></kbd></td>
+<td>If &#8211;whois, retrieve referral whois information, if
+available.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--extra_blacklist <var>EXTRA_BLACKLIST</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If &#8211;whois, A list of blacklisted whois servers in
+addition to the global BLACKLIST.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--ignore_referral_errors</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If &#8211;whois, ignore and continue when an exception is
+encountered on referral whois lookups.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--field_list <var>FIELD_LIST</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If &#8211;whois, a list of fields to parse: [&#8216;name&#8217;,
+&#8216;handle&#8217;, &#8216;description&#8217;, &#8216;country&#8217;, &#8216;state&#8217;, &#8216;city&#8217;,
+&#8216;address&#8217;, &#8216;postal_code&#8217;, &#8216;emails&#8217;, &#8216;created&#8217;,
+&#8216;updated&#8217;]</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Input (Required):</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--addr <var>IP</var></span></kbd></td>
+<td>An IPv4 or IPv6 address as a string.</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</div>
+<div class="section" id="usage-examples">
+<h2>Usage Examples<a class="headerlink" href="#usage-examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basic-usage">
+<h3>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span>ipwhois_cli.py --addr 74.125.225.229 --hr --show_name --colorize --depth 1
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="CONTRIBUTING.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="UTILS.html" class="btn btn-neutral" title="Utilities" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Philip Hane.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.13.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

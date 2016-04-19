@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ipwhois.whois &mdash; ipwhois 0.12.0 documentation</title>
+  <title>ipwhois.whois &mdash; ipwhois 0.13.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ipwhois 0.12.0 documentation" href="../../index.html"/>
+    <link rel="top" title="ipwhois 0.13.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.12.0
+                0.13.0
               </div>
             
           
@@ -82,6 +82,18 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html">Readme</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../RDAP.html">RDAP API (Recommended)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../WHOIS.html">Legacy Whois API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../UTILS.html">Utilities API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../CLI.html">CLI</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../CONTRIBUTING.html">Contributing</a></li>
@@ -184,7 +196,7 @@
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
-<span class="c1"># Legacy base whois output dictionary. Migration to the RDAP format is limited.</span>
+<span class="c1"># Legacy base whois output dictionary.</span>
 <span class="n">BASE_NET</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;cidr&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
     <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
@@ -324,8 +336,7 @@
 
 <div class="viewcode-block" id="Whois"><a class="viewcode-back" href="../../ipwhois.html#ipwhois.whois.Whois">[docs]</a><span class="k">class</span> <span class="nc">Whois</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The class for parsing via RDAP:</span>
-<span class="sd">    https://www.arin.net/resources/rdap.html</span>
+<span class="sd">    The class for parsing via whois</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        net: A ipwhois.net.Net object.</span>
@@ -627,7 +638,7 @@
                <span class="n">field_list</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">is_offline</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The function for retrieving and parsing whois information for an IP</span>
-<span class="sd">        address via port 43 (WHOIS).</span>
+<span class="sd">        address via port 43/tcp (WHOIS).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            inc_raw: Boolean for whether to include the raw results in the</span>
@@ -663,8 +674,7 @@
 <span class="sd">            :raw: Raw whois results if the inc_raw parameter is True. (String)</span>
 <span class="sd">            :referral: Dictionary of referral whois information if get_referral</span>
 <span class="sd">                is True and the server isn&#39;t blacklisted. Consists of fields</span>
-<span class="sd">                listed in the RWHOIS dictionary. Additional referral server</span>
-<span class="sd">                informaion is added in the server and port keys. (Dictionary)</span>
+<span class="sd">                listed in the RWHOIS dictionary.</span>
 <span class="sd">            :raw_referral: Raw referral whois results if the inc_raw parameter</span>
 <span class="sd">                is True. (String)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -859,7 +869,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.12.0',
+            VERSION:'0.13.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

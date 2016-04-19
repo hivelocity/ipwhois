@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Library Structure &mdash; ipwhois 0.12.0 documentation</title>
+  <title>Library Structure &mdash; ipwhois 0.13.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ipwhois 0.12.0 documentation" href="index.html"/> 
+    <link rel="top" title="ipwhois 0.13.0 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.12.0
+                0.13.0
               </div>
             
           
@@ -81,6 +81,18 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="README.html">Readme</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="RDAP.html">RDAP API (Recommended)</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="WHOIS.html">Legacy Whois API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="UTILS.html">Utilities API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CLI.html">CLI</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
@@ -169,7 +181,7 @@ release (TBD).</p>
 
 <dl class="method">
 <dt id="ipwhois.ipwhois.IPWhois.lookup_rdap">
-<code class="descname">lookup_rdap</code><span class="sig-paren">(</span><em>inc_raw=False</em>, <em>retry_count=3</em>, <em>depth=0</em>, <em>excluded_entities=None</em>, <em>bootstrap=False</em>, <em>rate_limit_timeout=120</em>, <em>asn_alts=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/ipwhois.html#IPWhois.lookup_rdap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.ipwhois.IPWhois.lookup_rdap" title="Permalink to this definition">¶</a></dt>
+<code class="descname">lookup_rdap</code><span class="sig-paren">(</span><em>inc_raw=False</em>, <em>retry_count=3</em>, <em>depth=0</em>, <em>excluded_entities=None</em>, <em>bootstrap=False</em>, <em>rate_limit_timeout=120</em>, <em>asn_alts=None</em>, <em>extra_org_map=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/ipwhois.html#IPWhois.lookup_rdap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.ipwhois.IPWhois.lookup_rdap" title="Permalink to this definition">¶</a></dt>
 <dd><p>The function for retrieving and parsing whois information for an IP
 address via HTTP (RDAP).</p>
 <p><strong>This is now the recommended method, as RDAP contains much better
@@ -194,6 +206,12 @@ when a rate limit notice is returned via rdap+json.</li>
 <li><strong>asn_alts</strong> &#8211; Array of additional lookup types to attempt if the
 ASN dns lookup fails. Allow permutations must be enabled.
 Defaults to all [&#8216;whois&#8217;, &#8216;http&#8217;].</li>
+<li><strong>extra_org_map</strong> &#8211; Dictionary mapping org handles to RIRs. This is for
+limited cases where ARIN REST (ASN fallback HTTP lookup) does
+not show an RIR as the org handle e.g., DNIC (which is now the
+built in ORG_MAP) e.g., {&#8216;DNIC&#8217;: &#8216;arin&#8217;}. Valid RIR values are
+(note the case-sensitive - this is meant to match the REST
+result): &#8216;ARIN&#8217;, &#8216;RIPE&#8217;, &#8216;apnic&#8217;, &#8216;lacnic&#8217;, &#8216;afrinic&#8217;</li>
 </ul>
 </td>
 </tr>
@@ -239,7 +257,7 @@ parameter is True.</td>
 
 <dl class="method">
 <dt id="ipwhois.ipwhois.IPWhois.lookup_whois">
-<code class="descname">lookup_whois</code><span class="sig-paren">(</span><em>inc_raw=False</em>, <em>retry_count=3</em>, <em>get_referral=False</em>, <em>extra_blacklist=None</em>, <em>ignore_referral_errors=False</em>, <em>field_list=None</em>, <em>asn_alts=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/ipwhois.html#IPWhois.lookup_whois"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.ipwhois.IPWhois.lookup_whois" title="Permalink to this definition">¶</a></dt>
+<code class="descname">lookup_whois</code><span class="sig-paren">(</span><em>inc_raw=False</em>, <em>retry_count=3</em>, <em>get_referral=False</em>, <em>extra_blacklist=None</em>, <em>ignore_referral_errors=False</em>, <em>field_list=None</em>, <em>asn_alts=None</em>, <em>extra_org_map=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/ipwhois.html#IPWhois.lookup_whois"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.ipwhois.IPWhois.lookup_whois" title="Permalink to this definition">¶</a></dt>
 <dd><p>The function for retrieving and parsing whois information for an IP
 address via port 43 (WHOIS).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -263,6 +281,12 @@ when an exception is encountered on referral whois lookups.</li>
 <li><strong>asn_alts</strong> &#8211; Array of additional lookup types to attempt if the
 ASN dns lookup fails. Allow permutations must be enabled.
 Defaults to all [&#8216;whois&#8217;, &#8216;http&#8217;].</li>
+<li><strong>extra_org_map</strong> &#8211; Dictionary mapping org handles to RIRs. This is for
+limited cases where ARIN REST (ASN fallback HTTP lookup) does
+not show an RIR as the org handle e.g., DNIC (which is now the
+built in ORG_MAP) e.g., {&#8216;DNIC&#8217;: &#8216;arin&#8217;}. Valid RIR values are
+(note the case-sensitive - this is meant to match the REST
+result): &#8216;ARIN&#8217;, &#8216;RIPE&#8217;, &#8216;apnic&#8217;, &#8216;lacnic&#8217;, &#8216;afrinic&#8217;</li>
 </ul>
 </td>
 </tr>
@@ -291,9 +315,7 @@ of the fields listed in the ipwhois.whois.RIR_WHOIS dictionary.
 </tr>
 <tr class="field-odd field"><th class="field-name">referral:</th><td class="field-body">Dictionary of referral whois information if get_referral
 is True and the server isn&#8217;t blacklisted. Consists of fields
-listed in the ipwhois.whois.RWHOIS dictionary. Additional
-referral server informaion is added in the server and port
-keys. (Dictionary)</td>
+listed in the ipwhois.whois.RWHOIS dictionary.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">raw_referral:</th><td class="field-body">Raw referral whois results if the inc_raw parameter
 is True. (String)</td>
@@ -370,10 +392,60 @@ asn_country_code (String) - The assigned ASN country code.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ipwhois.net.Net.get_asn_http">
+<code class="descname">get_asn_http</code><span class="sig-paren">(</span><em>retry_count=3</em>, <em>result=None</em>, <em>extra_org_map=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/net.html#Net.get_asn_http"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.net.Net.get_asn_http" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function for retrieving ASN information for an IP address from
+Arin via port 80 (HTTP). Currently limited to fetching asn_registry
+through a Arin whois (REST) lookup. The other values are returned as
+None to keep a consistent dict output. This should be used as a last
+chance fallback call behind ASN DNS &amp; ASN Whois lookups.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>retry_count</strong> &#8211; The number of times to retry in case socket errors,
+timeouts, connection resets, etc. are encountered.</li>
+<li><strong>result</strong> &#8211; Optional result object. This bypasses the ASN lookup.</li>
+<li><strong>extra_org_map</strong> &#8211; Dictionary mapping org handles to RIRs. This is for
+limited cases where ARIN REST (ASN fallback HTTP lookup) does
+not show an RIR as the org handle e.g., DNIC (which is now the
+built in ORG_MAP) e.g., {&#8216;DNIC&#8217;: &#8216;arin&#8217;}. Valid RIR values are
+(note the case-sensitive - this is meant to match the REST
+result): &#8216;ARIN&#8217;, &#8216;RIPE&#8217;, &#8216;apnic&#8217;, &#8216;lacnic&#8217;, &#8216;afrinic&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A dictionary containing the following keys:
+asn (String) - None, can&#8217;t retrieve with this method.
+asn_date (String) - None, can&#8217;t retrieve with this method.
+asn_registry (String) - The assigned ASN registry.
+asn_cidr (String) - None, can&#8217;t retrieve with this method.
+asn_country_code (String) - None, can&#8217;t retrieve with this</p>
+<blockquote>
+<div><p>method.</p>
+</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">Dictionary</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">ASNRegistryError</span></code> &#8211; The ASN registry is not known.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ASNLookupError</span></code> &#8211; The ASN lookup failed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ipwhois.net.Net.get_asn_whois">
 <code class="descname">get_asn_whois</code><span class="sig-paren">(</span><em>retry_count=3</em>, <em>result=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/net.html#Net.get_asn_whois"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.net.Net.get_asn_whois" title="Permalink to this definition">¶</a></dt>
 <dd><p>The function for retrieving ASN information for an IP address from
-Cymru via port 43 (WHOIS).</p>
+Cymru via port 43/tcp (WHOIS).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -467,7 +539,7 @@ were exhausted.</li>
 <dt id="ipwhois.net.Net.get_whois">
 <code class="descname">get_whois</code><span class="sig-paren">(</span><em>asn_registry='arin'</em>, <em>retry_count=3</em>, <em>server=None</em>, <em>port=43</em>, <em>extra_blacklist=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/net.html#Net.get_whois"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.net.Net.get_whois" title="Permalink to this definition">¶</a></dt>
 <dd><p>The function for retrieving whois or rwhois information for an IP
-address via any port. Defaults to port 43 (WHOIS).</p>
+address via any port. Defaults to port 43/tcp (WHOIS).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -503,7 +575,7 @@ global BLACKLIST or extra_blacklist.</li>
 
 <dl class="method">
 <dt id="ipwhois.net.Net.lookup_asn">
-<code class="descname">lookup_asn</code><span class="sig-paren">(</span><em>retry_count=3</em>, <em>asn_alts=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/net.html#Net.lookup_asn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.net.Net.lookup_asn" title="Permalink to this definition">¶</a></dt>
+<code class="descname">lookup_asn</code><span class="sig-paren">(</span><em>retry_count=3</em>, <em>asn_alts=None</em>, <em>extra_org_map=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/net.html#Net.lookup_asn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.net.Net.lookup_asn" title="Permalink to this definition">¶</a></dt>
 <dd><p>The wrapper function for retrieving and parsing ASN information for an
 IP address.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -516,6 +588,12 @@ timeouts, connection resets, etc. are encountered.</li>
 <li><strong>asn_alts</strong> &#8211; Array of additional lookup types to attempt if the
 ASN dns lookup fails. Allow permutations must be enabled.
 Defaults to all [&#8216;whois&#8217;, &#8216;http&#8217;].</li>
+<li><strong>extra_org_map</strong> &#8211; Dictionary mapping org handles to RIRs. This is for
+limited cases where ARIN REST (ASN fallback HTTP lookup) does
+not show an RIR as the org handle e.g., DNIC (which is now the
+built in ORG_MAP) e.g., {&#8216;DNIC&#8217;: &#8216;arin&#8217;}. Valid RIR values are
+(note the case-sensitive - this is meant to match the REST
+result): &#8216;ARIN&#8217;, &#8216;RIPE&#8217;, &#8216;apnic&#8217;, &#8216;lacnic&#8217;, &#8216;afrinic&#8217;</li>
 </ul>
 </td>
 </tr>
@@ -633,8 +711,7 @@ True.</td>
 <span class="target" id="module-ipwhois.whois"></span><dl class="class">
 <dt id="ipwhois.whois.Whois">
 <em class="property">class </em><code class="descclassname">ipwhois.whois.</code><code class="descname">Whois</code><span class="sig-paren">(</span><em>net</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/whois.html#Whois"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.whois.Whois" title="Permalink to this definition">¶</a></dt>
-<dd><p>The class for parsing via RDAP:
-<a class="reference external" href="https://www.arin.net/resources/rdap.html">https://www.arin.net/resources/rdap.html</a></p>
+<dd><p>The class for parsing via whois</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -656,7 +733,7 @@ resolved).</li>
 <dt id="ipwhois.whois.Whois.lookup">
 <code class="descname">lookup</code><span class="sig-paren">(</span><em>inc_raw=False</em>, <em>retry_count=3</em>, <em>response=None</em>, <em>get_referral=False</em>, <em>extra_blacklist=None</em>, <em>ignore_referral_errors=False</em>, <em>asn_data=None</em>, <em>field_list=None</em>, <em>is_offline=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ipwhois/whois.html#Whois.lookup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ipwhois.whois.Whois.lookup" title="Permalink to this definition">¶</a></dt>
 <dd><p>The function for retrieving and parsing whois information for an IP
-address via port 43 (WHOIS).</p>
+address via port 43/tcp (WHOIS).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -707,8 +784,7 @@ of the fields listed in the NIC_WHOIS dictionary. (List)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">referral:</th><td class="field-body">Dictionary of referral whois information if get_referral
 is True and the server isn&#8217;t blacklisted. Consists of fields
-listed in the RWHOIS dictionary. Additional referral server
-informaion is added in the server and port keys. (Dictionary)</td>
+listed in the RWHOIS dictionary.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">raw_referral:</th><td class="field-body">Raw referral whois results if the inc_raw parameter
 is True. (String)</td>
@@ -999,7 +1075,7 @@ ipwhois.net.Net.</p>
 <dd><p>An Exception for when the whois lookup failed.</p>
 </dd></dl>
 
-</div>
+<span class="target" id="module-ipwhois.hr"></span></div>
 
 
            </div>
@@ -1033,7 +1109,7 @@ ipwhois.net.Net.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.12.0',
+            VERSION:'0.13.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
