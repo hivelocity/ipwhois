@@ -409,7 +409,10 @@ class Net:
             query = self.address_str + '\r\n'
             if asn_registry == 'arin':
 
-                query = 'n + %s' % query
+                query = 'n + {}'.format(query)
+
+            elif asn_registry == 'ripencc':
+                query = '-B {}'.format(query)
 
             # Query the whois server, and store the results.
             conn.send(query.encode())
