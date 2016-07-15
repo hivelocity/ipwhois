@@ -46,10 +46,7 @@ class IPWhois:
     def __init__(self, address, timeout=5, proxy_opener=None,
                  allow_permutations=True):
 
-        self.net = Net(
-            address=address, timeout=timeout, proxy_opener=proxy_opener,
-            allow_permutations=allow_permutations
-        )
+        self.net = Net(address, timeout, proxy_opener, allow_permutations)
 
         self.address = self.net.address
         self.timeout = self.net.timeout
@@ -60,26 +57,13 @@ class IPWhois:
 
     def __repr__(self):
 
-        return 'IPWhois({0}, {1}, {2})'.format(
-            self.address_str, str(self.timeout), repr(self.net.opener)
+        return 'IPWhois(%r, %r, %r)' % (
+            self.address_str, self.timeout, self.net.opener
         )
 
-    def lookup(self, *args, **kwargs):
-        """
-        Temporary wrapper for legacy whois lookups (moved to
-        IPWhois.lookup_whois()). This will be removed in a future
-        release (TBD).
-        """
-
-        from warnings import warn
-        warn("IPWhois.lookup() has been deprecated and will be removed. "
-             "You should now use IPWhois.lookup_whois() for legacy whois "
-             "lookups.")
-        return self.lookup_whois(*args, **kwargs)
-
-    def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
-                     extra_blacklist=None, ignore_referral_errors=False,
-                     field_list=None, asn_alts=None, extra_org_map=None):
+    def lookup(self, inc_raw=False, retry_count=3, get_referral=False,
+               extra_blacklist=None, ignore_referral_errors=False,
+               field_list=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -98,15 +82,6 @@ class IPWhois:
             field_list: If provided, a list of fields to parse:
                 ['name', 'handle', 'description', 'country', 'state', 'city',
                 'address', 'postal_code', 'emails', 'created', 'updated']
-            asn_alts: Array of additional lookup types to attempt if the
-                ASN dns lookup fails. Allow permutations must be enabled.
-                Defaults to all ['whois', 'http'].
-            extra_org_map: Dictionary mapping org handles to RIRs. This is for
-                limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now the
-                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
-                (note the case-sensitive - this is meant to match the REST
-                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Dictionary:
@@ -123,7 +98,9 @@ class IPWhois:
             :raw: Raw whois results if the inc_raw parameter is True. (String)
             :referral: Dictionary of referral whois information if get_referral
                 is True and the server isn't blacklisted. Consists of fields
-                listed in the ipwhois.whois.RWHOIS dictionary.
+                listed in the ipwhois.whois.RWHOIS dictionary. Additional
+                referral server informaion is added in the server and port
+                keys. (Dictionary)
             :raw_referral: Raw referral whois results if the inc_raw parameter
                 is True. (String)
         """
@@ -135,10 +112,7 @@ class IPWhois:
 
         # Retrieve the ASN information.
         log.debug('ASN lookup for {0}'.format(self.address_str))
-        asn_data, response = self.net.lookup_asn(
-            retry_count=retry_count, asn_alts=asn_alts,
-            extra_org_map=extra_org_map
-        )
+        asn_data, response = self.net.lookup_asn(retry_count)
 
         # Add the ASN information to the return dictionary.
         results.update(asn_data)
@@ -147,10 +121,8 @@ class IPWhois:
         whois = Whois(self.net)
         log.debug('WHOIS lookup for {0}'.format(self.address_str))
         whois_data = whois.lookup(
-            inc_raw=inc_raw, retry_count=retry_count, response=response,
-            get_referral=get_referral, extra_blacklist=extra_blacklist,
-            ignore_referral_errors=ignore_referral_errors, asn_data=asn_data,
-            field_list=field_list
+            inc_raw, retry_count, response, get_referral, extra_blacklist,
+            ignore_referral_errors, asn_data, field_list
         )
 
         # Add the RDAP information to the return dictionary.
@@ -159,8 +131,7 @@ class IPWhois:
         return results
 
     def lookup_rdap(self, inc_raw=False, retry_count=3, depth=0,
-                    excluded_entities=None, bootstrap=False,
-                    rate_limit_timeout=120, asn_alts=None, extra_org_map=None):
+                    excluded_entities=None, bootstrap=False):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -179,17 +150,6 @@ class IPWhois:
             bootstrap: If True, performs lookups via ARIN bootstrap rather
                 than lookups based on ASN data. ASN lookups are not performed
                 and no output for any of the asn* fields is provided.
-            rate_limit_timeout: The number of seconds to wait before retrying
-                when a rate limit notice is returned via rdap+json.
-            asn_alts: Array of additional lookup types to attempt if the
-                ASN dns lookup fails. Allow permutations must be enabled.
-                Defaults to all ['whois', 'http'].
-            extra_org_map: Dictionary mapping org handles to RIRs. This is for
-                limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now the
-                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
-                (note the case-sensitive - this is meant to match the REST
-                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Dictionary:
@@ -220,10 +180,7 @@ class IPWhois:
 
             # Retrieve the ASN information.
             log.debug('ASN lookup for {0}'.format(self.address_str))
-            asn_data, asn_response = self.net.lookup_asn(
-                retry_count=retry_count, asn_alts=asn_alts,
-                extra_org_map=extra_org_map
-            )
+            asn_data, response = self.net.lookup_asn(retry_count)
 
             # Add the ASN information to the return dictionary.
             results.update(asn_data)
@@ -231,12 +188,8 @@ class IPWhois:
         # Retrieve the RDAP data and parse.
         rdap = RDAP(self.net)
         log.debug('RDAP lookup for {0}'.format(self.address_str))
-        rdap_data = rdap.lookup(
-            inc_raw=inc_raw, retry_count=retry_count, asn_data=asn_data,
-            depth=depth, excluded_entities=excluded_entities,
-            response=response, bootstrap=bootstrap,
-            rate_limit_timeout=rate_limit_timeout
-        )
+        rdap_data = rdap.lookup(inc_raw, retry_count, asn_data, depth,
+                                excluded_entities, response, bootstrap)
 
         # Add the RDAP information to the return dictionary.
         results.update(rdap_data)

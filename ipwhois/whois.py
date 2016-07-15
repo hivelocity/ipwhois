@@ -43,7 +43,7 @@ else:  # pragma: no cover
 
 log = logging.getLogger(__name__)
 
-# Legacy base whois output dictionary.
+# Legacy base whois output dictionary. Migration to the RDAP format is limited.
 BASE_NET = {
     'cidr': None,
     'name': None,
@@ -183,7 +183,8 @@ ASN_REFERRALS = {
 
 class Whois:
     """
-    The class for parsing via whois
+    The class for parsing via RDAP:
+    https://www.arin.net/resources/rdap.html
 
     Args:
         net: A ipwhois.net.Net object.
@@ -485,7 +486,7 @@ class Whois:
                field_list=None, is_offline=False):
         """
         The function for retrieving and parsing whois information for an IP
-        address via port 43/tcp (WHOIS).
+        address via port 43 (WHOIS).
 
         Args:
             inc_raw: Boolean for whether to include the raw results in the
@@ -521,7 +522,8 @@ class Whois:
             :raw: Raw whois results if the inc_raw parameter is True. (String)
             :referral: Dictionary of referral whois information if get_referral
                 is True and the server isn't blacklisted. Consists of fields
-                listed in the RWHOIS dictionary.
+                listed in the RWHOIS dictionary. Additional referral server
+                informaion is added in the server and port keys. (Dictionary)
             :raw_referral: Raw referral whois results if the inc_raw parameter
                 is True. (String)
         """
@@ -547,10 +549,9 @@ class Whois:
                       .format(self._net.address_str))
 
             # Retrieve the whois data.
-            response = self._net.get_whois(
-                asn_registry=asn_data['asn_registry'], retry_count=retry_count,
-                extra_blacklist=extra_blacklist
-            )
+            response = self._net.get_whois(asn_data['asn_registry'],
+                                           retry_count,
+                                           extra_blacklist=extra_blacklist)
 
             if get_referral:
 
@@ -588,23 +589,26 @@ class Whois:
 
             response_ref = None
 
-            try:
+            if ignore_referral_errors:
 
-                response_ref = self._net.get_whois(
-                    asn_registry='', retry_count=retry_count,
-                    server=referral_server, port=referral_port,
-                    extra_blacklist=extra_blacklist
-                )
+                try:
 
-            except (BlacklistError, WhoisLookupError):
+                    response_ref = self._net.get_whois('',
+                                                       retry_count,
+                                                       referral_server,
+                                                       referral_port,
+                                                       extra_blacklist)
 
-                if ignore_referral_errors:
+                except (BlacklistError, WhoisLookupError):
 
                     pass
 
-                else:
+            else:
 
-                    raise
+                response_ref = self._net.get_whois(
+                    '', retry_count, referral_server, referral_port,
+                    extra_blacklist
+                )
 
             if response_ref:
 

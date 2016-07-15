@@ -448,7 +448,8 @@ def unique_addresses(data=None, file_path=None):
     Returns:
         Dictionary:
 
-        :ip address/network: Each address or network found is a dictionary w/\:
+        :ip address/network: Each address or network found is a dictionary
+            containing\:
 
             :count: Total number of times seen (Integer)
             :ports: Dictionary with port numbers as keys and the number of

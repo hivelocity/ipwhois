@@ -5,7 +5,7 @@ import sys
 import io
 
 NAME = 'ipwhois'
-VERSION = '0.13.0'
+VERSION = '0.11.2'
 AUTHOR = "Philip Hane"
 AUTHOR_EMAIL = "secynic AT gmail DOT com"
 DESCRIPTION = "Retrieve and parse whois data for IPv4 and IPv6 addresses."
@@ -30,10 +30,12 @@ KEYWORDS = [
     "RIR"
 ]
 
-README = io.open(file='README.rst', mode='r', encoding='utf-8').read()
-CHANGES = io.open(file='CHANGES.rst', mode='r', encoding='utf-8').read()
-LONG_DESCRIPTION = '\n\n'.join([README, CHANGES])
-LICENSE = io.open(file='LICENSE.txt', mode='r', encoding='utf-8').read()
+LONG_DESCRIPTION = '\n\n'.join([io.open('README.rst', 'r',
+                                        encoding='utf-8').read(),
+                                io.open('CHANGES.rst', 'r',
+                                        encoding='utf-8').read()])
+
+LICENSE = io.open('LICENSE.txt', 'r', encoding='utf-8').read()
 
 URL = "https://github.com/secynic/ipwhois"
 DOWNLOAD_URL = "https://github.com/secynic/ipwhois/tarball/master"
@@ -83,7 +85,5 @@ setup(
     classifiers=CLASSIFIERS,
     packages=PACKAGES,
     package_data=PACKAGE_DATA,
-    install_requires=INSTALL_REQUIRES,
-    scripts=['ipwhois/scripts/ipwhois_cli.py',
-             'ipwhois/scripts/ipwhois_utils_cli.py']
+    install_requires=INSTALL_REQUIRES
 )

@@ -27,7 +27,6 @@ from . import (Net, NetError, InvalidEntityContactObject, InvalidNetworkObject,
 from .utils import ipv4_lstrip_zeros, calculate_cidr, unique_everseen
 from .net import ip_address
 import logging
-import json
 
 log = logging.getLogger(__name__)
 
@@ -354,7 +353,7 @@ class _RDAPCommon:
 
                 pass
 
-            if all(tmp.values()):
+            if len(tmp.values()) > 1:
 
                 ret.append(tmp)
 
@@ -478,8 +477,6 @@ class _RDAPNetwork(_RDAPCommon):
 
         except (KeyError, ValueError):
 
-            log.debug('Handle missing, json_output: {0}'.format(json.dumps(
-                self.json)))
             raise InvalidNetworkObject('Handle is missing for RDAP network '
                                        'object')
 
@@ -508,7 +505,7 @@ class _RDAPNetwork(_RDAPCommon):
         except (KeyError, ValueError, TypeError):
 
             log.debug('IP address data incomplete. Data parsed prior to '
-                      'exception: {0}'.format(json.dumps(self.vars)))
+                      'exception: {0}'.format(self.vars))
             raise InvalidNetworkObject('IP address data is missing for RDAP '
                                        'network object.')
 
@@ -609,15 +606,6 @@ class _RDAPEntity(_RDAPCommon):
 
             pass
 
-        try:
-
-            self.vars['events_actor'] = self.summarize_events(
-                self.json['asEventActor'])
-
-        except (KeyError, ValueError, TypeError):
-
-            pass
-
         self.vars['entities'] = []
         try:
 
@@ -666,8 +654,7 @@ class RDAP:
                            'ipwhois.net.Net')
 
     def lookup(self, inc_raw=False, retry_count=3, asn_data=None, depth=0,
-               excluded_entities=None, response=None, bootstrap=False,
-               rate_limit_timeout=120):
+               excluded_entities=None, response=None, bootstrap=False):
         """
         The function for retrieving and parsing information for an IP
         address via RDAP (HTTP).
@@ -678,15 +665,13 @@ class RDAP:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
             asn_data: Result dictionary from ipwhois.net.Net.lookup_asn().
-                Optional if the bootstrap parameter is True.
+                May be optional in the future when utilizing RDAP bootstrap.
             depth: How many levels deep to run queries when additional
                 referenced objects are found.
             excluded_entities: A list of entity handles to not perform lookups.
             response: Optional response object, this bypasses the RDAP lookup.
             bootstrap: If True, performs lookups via ARIN bootstrap rather
                 than lookups based on ASN data.
-            rate_limit_timeout: The number of seconds to wait before retrying
-                when a rate limit notice is returned via rdap+json.
 
         Returns:
             Dictionary:
@@ -733,8 +718,7 @@ class RDAP:
 
             # Retrieve the whois data.
             response = self._net.get_http_json(
-                url=ip_url, retry_count=retry_count,
-                rate_limit_timeout=rate_limit_timeout
+                ip_url, retry_count
             )
 
         if inc_raw:
@@ -774,8 +758,7 @@ class RDAP:
 
         if depth > 0 and len(temp_objects) > 0:
 
-            log.debug('Parsing RDAP sub-entities to depth: {0}'.format(str(
-                depth)))
+            log.debug('Parsing RDAP sub-entities to depth: {0}'.format(depth))
 
         while depth > 0 and len(temp_objects) > 0:
 
@@ -802,8 +785,7 @@ class RDAP:
 
                                 # RDAP entity query
                                 response = self._net.get_http_json(
-                                    url=entity_url, retry_count=retry_count,
-                                    rate_limit_timeout=rate_limit_timeout
+                                    entity_url, retry_count
                                 )
 
                                 # Parse the entity
